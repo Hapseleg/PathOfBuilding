@@ -96,6 +96,32 @@ local SkillsTabClass = newClass("SkillsTab", "UndoHandler", "ControlHost", "Cont
 		self.showAltQualityGems = state
 	end)
 
+	-- Mine
+	-- TODO insert chars current stats
+	--lvl
+	self.controls.maxRequiredLevel = new("EditControl", {"TOPLEFT",self.controls.groupList,"BOTTOMLEFT"}, optionInputsX, 190, 60, 20, nil, nil, "%D", 2, function(buf)
+		self.maxRequiredLevel = m_min(tonumber(buf) or 1, 100)
+	end)
+	self.controls.maxRequiredLevelLabel = new("LabelControl", {"RIGHT",self.controls.maxRequiredLevel,"LEFT"}, -4, 0, 0, 16, "^7Max required level:")
+
+	--str
+	self.controls.maxRequiredStrength = new("EditControl", {"TOPLEFT",self.controls.groupList,"BOTTOMLEFT"}, optionInputsX, 214, 60, 20, nil, nil, "%D", 2, function(buf)
+		self.maxRequiredStrength = m_min(tonumber(buf) or 1, 100)
+	end)
+	self.controls.maxRequiredStrengthLabel = new("LabelControl", {"RIGHT",self.controls.maxRequiredStrength,"LEFT"}, -4, 0, 0, 16, "^7Max required strength:")
+
+	--dex
+	self.controls.maxRequiredDexterity = new("EditControl", {"TOPLEFT",self.controls.groupList,"BOTTOMLEFT"}, optionInputsX, 238, 60, 20, nil, nil, "%D", 2, function(buf)
+		self.maxRequiredDexterity = m_min(tonumber(buf) or 1, 100)
+	end)
+	self.controls.maxRequiredDexterityhLabel = new("LabelControl", {"RIGHT",self.controls.maxRequiredDexterity,"LEFT"}, -4, 0, 0, 16, "^7Max required dexterity:")
+
+	--int
+	self.controls.maxRequiredIntelligence = new("EditControl", {"TOPLEFT",self.controls.groupList,"BOTTOMLEFT"}, optionInputsX, 262, 60, 20, nil, nil, "%D", 2, function(buf)
+		self.maxRequiredIntelligence = m_min(tonumber(buf) or 1, 100)
+	end)
+	self.controls.maxRequiredIntelligenceLabel = new("LabelControl", {"RIGHT",self.controls.maxRequiredIntelligence,"LEFT"}, -4, 0, 0, 16, "^7Max required intelligence:")
+
 	-- Socket group details
 	if main.portraitMode then
 		self.anchorGroupDetail = new("Control", {"TOPLEFT",self.controls.optionSection,"BOTTOMLEFT"}, 0, 20, 0, 0)
@@ -797,7 +823,48 @@ function SkillsTabClass:CreateGemSlot(index)
 	self.controls["gemSlot"..index.."EnableGlobal2"] = slot.enableGlobal2
 end
 
+function SkillsTabClass:getGemMaxReqList(gemData, characterlevel, maxDex, maxInt, maxStr)
+	local maxReqList = {}
+	local maxReqDex, maxReqInt, maxReqStr
+	maxReqDex = calcLib.getGemStatRequirement(characterlevel, gemData.grantedEffect.support, gemData.reqDex)
+	maxReqInt = calcLib.getGemStatRequirement(characterlevel, gemData.grantedEffect.support, gemData.reqInt)
+	maxReqStr = calcLib.getGemStatRequirement(characterlevel, gemData.grantedEffect.support, gemData.reqStr)
+	
+	--if the gem fits the given max dex, int and str add it to the list
+	if maxReqDex <= maxDex and maxReqInt <= maxInt and maxReqStr <= maxStr then
+	-- if maxReqDex <= maxDex then
+	-- 	if maxReqInt <= maxInt then
+	-- 		if maxReqStr <= maxStr then
+				print(gemData.name)
+				print(maxReqDex <= maxDex and maxReqInt <= maxInt and maxReqStr <= maxStr)
+				-- print(gemData.grantedEffect.levels[1].levelRequirement)
 
+				t_insert(maxReqList, gemData)
+		-- 	end
+		-- end
+	-- if maxReqStr <= maxStr then
+		-- print(gemData.name)
+		-- print(gemData.reqStr)
+		-- print(gemData.reqStr < maxStr)
+		-- -- print(gemData.grantedEffect.levels[1].levelRequirement)
+
+		-- t_insert(maxReqList, gemData)
+	end
+		
+	return maxReqList
+end
+
+function SkillsTabClass:getGemMaxLevelList(gemData, characterlevel)
+	--find the gem lvl that fits the characterlevel
+	for i, gemLevelInfo in ipairs(gemData.grantedEffect.levels) do
+		if gemLevelInfo.levelRequirement > characterlevel then
+			if i == 1 then
+				return
+			else
+				t_insert(maxReqList, gemData.name)
+			end
+		end
+end
 
 function SkillsTabClass:getGemAltQualityList(gemData)
 	local altQualList = { }

@@ -54,22 +54,34 @@ local GemSelectClass = newClass("GemSelectControl", "EditControl", function(self
 	}
 end)
 
+-- function GemSelectClass:PopulateGemList()
+-- 	wipeTable(self.gems)
+-- 	local showAll = self.skillsTab.showSupportGemTypes == "ALL"
+-- 	local showAwakened = self.skillsTab.showSupportGemTypes == "AWAKENED"
+-- 	local showNormal = self.skillsTab.showSupportGemTypes == "NORMAL"
+-- 	for gemId, gemData in pairs(self.skillsTab.build.data.gems) do
+-- 		if (showAwakened or showAll) and gemData.grantedEffect.plusVersionOf then
+-- 			self.gems["Default:" .. gemId] = gemData
+-- 		elseif showNormal or showAll then
+-- 			if self.skillsTab.showAltQualityGems and self.skillsTab.defaultGemQuality or 0 > 0 then
+-- 				for _, altQual in ipairs(self.skillsTab:getGemAltQualityList(gemData)) do
+-- 					self.gems[altQual.type .. ":" .. gemId] = gemData
+-- 				end
+-- 			else
+-- 				self.gems["Default:" .. gemId] = gemData
+-- 			end
+-- 		end
+-- 	end
+-- end
 function GemSelectClass:PopulateGemList()
 	wipeTable(self.gems)
 	local showAll = self.skillsTab.showSupportGemTypes == "ALL"
 	local showAwakened = self.skillsTab.showSupportGemTypes == "AWAKENED"
 	local showNormal = self.skillsTab.showSupportGemTypes == "NORMAL"
 	for gemId, gemData in pairs(self.skillsTab.build.data.gems) do
-		if (showAwakened or showAll) and gemData.grantedEffect.plusVersionOf then
+		
+		for _, maxReq in ipairs(self.skillsTab:getGemMaxReqList(gemData, 10, 1, 1, 1)) do
 			self.gems["Default:" .. gemId] = gemData
-		elseif showNormal or showAll then
-			if self.skillsTab.showAltQualityGems and self.skillsTab.defaultGemQuality or 0 > 0 then
-				for _, altQual in ipairs(self.skillsTab:getGemAltQualityList(gemData)) do
-					self.gems[altQual.type .. ":" .. gemId] = gemData
-				end
-			else
-				self.gems["Default:" .. gemId] = gemData
-			end
 		end
 	end
 end
