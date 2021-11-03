@@ -864,6 +864,7 @@ function SkillsTabClass:getGemMaxLevelList(gemData, characterlevel)
 				t_insert(maxReqList, gemData.name)
 			end
 		end
+	end
 end
 
 function SkillsTabClass:getGemAltQualityList(gemData)
